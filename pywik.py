@@ -22,6 +22,8 @@ parser.add_argument("--html", help="Get full page html", action='store_true')
 parser.add_argument("-c", "--all-page-content", help="Returns page plain text", action='store_true')
 parser.add_argument("-r", "--random", help="Random article integer argument", type=int)
 parser.add_argument("-ru", "--russian", help="Sets language to Russian", action='store_true')
+# Add custom language argument that can be used to search in the language of the user's choice
+parser.add_argument("-l", "--custom-lang", help="Perform search in specified world language (abbreviation)", nargs='?', type=str) # not developed yet
 
 args = parser.parse_args()
 
@@ -36,10 +38,15 @@ def make_page_search(search_term):
         print(f"PageError: '{search_term}' does not match any pages. Try again.")
         # if page not found calls suggest_term() function to suggest an orthographically similar page title
         suggest_term()
-    except wikipedia.exceptions.DisambiguationError:
-        print("The term you search lead to a disambiguation page..")
-    except:
-        print("Catch-all error message; Investigate further. VPN might be to blame")
+    except wikipedia.exceptions.DisambiguationError as disambiguation_page_list_object: # access the returned list by using .options property on the the list object
+        print(f"The page '{search_term}' you have search searched leads to a disambiguation junction page... Here are your options:")
+        for term in disambiguation_page_list_object.options:
+            print(g + term + reset, end=', ')
+        print("\nWhat is your decision?")
+        # function then recursively calls itself with the new search value obtained from the user-decision on the disambiguation juncture
+        
+    # except:
+    #     print("Catch-all error message; Investigate further. VPN might be to blame")
 
 
 def return_page_plain_text(search_term, russian_lang=False):
