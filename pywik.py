@@ -4,6 +4,7 @@
 # supports random page generation in English and Russian
 # can dump full wiki page content or merely page summaries to stdout in Russian or English
 
+from requests.sessions import dispatch_hook
 import wikipedia
 import argparse
 from colorama import Fore, Style
@@ -30,20 +31,31 @@ args = parser.parse_args()
 # #####################################################################
 # DEFINITIONS
 
-def make_page_search(search_term):
+def make_page_search(search_term: str):
     try:
         result = wikipedia.page(title=search_term, auto_suggest=False)
+        print("\n\n" + g + result.title + reset)
         print(result.summary)
     except wikipedia.exceptions.PageError:
         print(f"PageError: '{search_term}' does not match any pages. Try again.")
         # if page not found calls suggest_term() function to suggest an orthographically similar page title
         suggest_term()
     except wikipedia.exceptions.DisambiguationError as disambiguation_page_list_object: # access the returned list by using .options property on the the list object
-        print(f"The page '{search_term}' you have search searched leads to a disambiguation junction page... Here are your options:")
+        print(f"The page '{search_term}' you have searched leads to a disambiguation junction page... Here are your options:")
+        index_for_term = 0
+        terms_list = disambiguation_page_list_object.options
         for term in disambiguation_page_list_object.options:
-            print(g + term + reset, end=', ')
-        print("\nWhat is your decision?")
+            print(str(index_for_term) + " - " + g + term + reset, end=',\n')
+            index_for_term+=1
+        term_selection_index = input(b + "--> " + reset)
+        print("\"" + g + str(disambiguation_page_list_object.options[int(term_selection_index)]) + reset + "\"" + " selected")
+        # After determining path forward from disambiguation junction, the function calls itsself recursively. In this way if another disambiguation page is reached it can be handled likewise
+        search_term = disambiguation_page_list_object.options[int(term_selection_index)]
         # function then recursively calls itself with the new search value obtained from the user-decision on the disambiguation juncture
+        make_page_search(search_term)
+    except:
+        print("Catchall Error: Something went wrong. Bashing keyboard furiously three times may resolve the problem")
+        
         
     # except:
     #     print("Catch-all error message; Investigate further. VPN might be to blame")
