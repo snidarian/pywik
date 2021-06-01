@@ -24,7 +24,7 @@ parser.add_argument("-c", "--all-page-content", help="Returns page plain text", 
 parser.add_argument("-r", "--random", help="Random article integer argument", type=int)
 parser.add_argument("-ru", "--russian", help="Sets language to Russian", action='store_true')
 # Add custom language argument that can be used to search in the language of the user's choice
-parser.add_argument("-l", "--custom-lang", help="Perform search in specified world language (abbreviation)", nargs='?', type=str) # not developed yet
+parser.add_argument('--list-all-languages', help="This options lists all language prefixes", action='store_true')
 
 args = parser.parse_args()
 
@@ -54,11 +54,7 @@ def make_page_search(search_term: str):
         # function then recursively calls itself with the new search value obtained from the user-decision on the disambiguation juncture
         make_page_search(search_term)
     except:
-        print("Catchall Error: Something went wrong. Bashing keyboard furiously three times may resolve the problem")
-        
-        
-    # except:
-    #     print("Catch-all error message; Investigate further. VPN might be to blame")
+        print("Catchall Error: Something went wrong. VPN might be causing an error in interacting with Wikipedias API")
 
 
 def return_page_plain_text(search_term, russian_lang=False):
@@ -123,6 +119,12 @@ def return_page_html(term):
         return(html)
 
 
+def list_all_languages():
+    dict = wikipedia.languages()
+    print(dict)
+
+
+
 # Main Function
 def main():
     russian_lang = False
@@ -167,7 +169,9 @@ def main():
     elif args.html:
         html = return_page_html(args.query)
         print(html)
-    else:
+    elif args.list_all_languages:
+        list_all_languages()
+    else:            
         make_page_search(args.query)
 
 
