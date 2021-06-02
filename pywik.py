@@ -10,6 +10,7 @@ import argparse
 from colorama import Fore, Style
 import lxml
 
+
 # ANSI Terminal color definitions
 r = Fore.RED; w = Fore.WHITE; b = Fore.BLUE; g = Fore.GREEN; bl = Fore.BLACK 
 m = Fore.MAGENTA; y = Fore.YELLOW; c = Fore.CYAN; reset = Fore.RESET
@@ -36,6 +37,8 @@ def make_page_search(search_term: str):
         result = wikipedia.page(title=search_term, auto_suggest=False)
         print("\n\n" + g + result.title + reset)
         print(result.summary)
+    except PageError:
+        print(r + "page not found" + reset)
     except wikipedia.exceptions.PageError:
         print(f"PageError: '{search_term}' does not match any pages. Try again.")
         # if page not found calls suggest_term() function to suggest an orthographically similar page title
@@ -50,9 +53,9 @@ def make_page_search(search_term: str):
         term_selection_index = input(b + "--> " + reset)
         print("\"" + g + str(disambiguation_page_list_object.options[int(term_selection_index)]) + reset + "\"" + " selected")
         # After determining path forward from disambiguation junction, the function calls itsself recursively. In this way if another disambiguation page is reached it can be handled likewise
-        search_term = disambiguation_page_list_object.options[int(term_selection_index)]
+        refined_search_term = disambiguation_page_list_object.options[int(term_selection_index)]
         # function then recursively calls itself with the new search value obtained from the user-decision on the disambiguation juncture
-        make_page_search(search_term)
+        make_page_search(refined_search_term)
     except:
         print("Catchall Error: Something went wrong. VPN might be causing an error in interacting with Wikipedias API")
 
