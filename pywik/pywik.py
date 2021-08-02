@@ -11,26 +11,10 @@ import argparse
 from colorama import Fore, Style
 import lxml
 
-
 # ANSI Terminal color definitions
 r = Fore.RED; w = Fore.WHITE; b = Fore.BLUE; g = Fore.GREEN; bl = Fore.BLACK 
 m = Fore.MAGENTA; y = Fore.YELLOW; c = Fore.CYAN; reset = Fore.RESET
 
-# Argparse sets up with global scope for greater ease
-# Argparse takes care of the arguments passed to the program
-parser = argparse.ArgumentParser(description="Command line Wikipedia Utility. Returns summary paragraph by default. Enclose multi-word search terms in a pair of double quotes")
-
-parser.add_argument("query", help="Search term string", type=str, nargs='?', default='wikipedia')
-parser.add_argument("--html", help="Get full page html", action='store_true')
-parser.add_argument("-c", "--all-page-content", help="Returns page plain text", action='store_true')
-parser.add_argument("-r", "--random", help="Random article integer argument", type=int)
-parser.add_argument("-ru", "--russian", help="Sets language to Russian", action='store_true')
-# Add custom language argument that can be used to search in the language of the user's choice
-parser.add_argument('--list-all-languages', help="This options lists all language prefixes", action='store_true')
-
-args = parser.parse_args()
-
-# #####################################################################
 # DEFINITIONS
 
 def make_page_search(search_term: str):
@@ -131,6 +115,18 @@ def list_all_languages():
 
 # Main Function
 def main():
+    # Argparse sets up with global scope for greater ease
+    # Argparse takes care of the arguments passed to the program
+    parser = argparse.ArgumentParser(description="Command line Wikipedia Utility. Returns summary paragraph by default. Enclose multi-word search terms in a pair of double quotes")
+    parser.add_argument("query", help="Search term string", type=str, nargs='?', default='wikipedia')
+    parser.add_argument("--html", help="Get full page html", action='store_true')
+    parser.add_argument("-c", "--all-page-content", help="Returns page plain text", action='store_true')
+    parser.add_argument("-r", "--random", help="Random article integer argument", type=int)
+    parser.add_argument("-ru", "--russian", help="Sets language to Russian", action='store_true')
+    # Add custom language argument that can be used to search in the language of the user's choice
+    parser.add_argument('--list-all-languages', help="This options lists all language prefixes", action='store_true')
+    args = parser.parse_args()
+    
     russian_lang = False
     # check if the query argument contains any russian letter
     for letter in [ # Vowels listed first so for-loop breaks sooner saving time
@@ -179,8 +175,8 @@ def main():
         make_page_search(args.query)
 
 
-# #################################################
-# EXECUTIONS
+# EXECUTION
+
 
 if __name__ == "__main__":
     main()
